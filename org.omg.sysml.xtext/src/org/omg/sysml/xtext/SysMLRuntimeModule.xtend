@@ -8,6 +8,7 @@ import com.google.inject.name.Names
 import org.eclipse.xtext.linking.ILinker
 import org.eclipse.xtext.naming.IQualifiedNameConverter
 import org.eclipse.xtext.naming.IQualifiedNameProvider
+import org.eclipse.xtext.parsetree.reconstr.ITransientValueService
 import org.eclipse.xtext.resource.DerivedStateAwareResource
 import org.eclipse.xtext.resource.DerivedStateAwareResourceDescriptionManager
 import org.eclipse.xtext.resource.IDerivedStateComputer
@@ -28,6 +29,7 @@ import org.omg.sysml.xtext.naming.SysMLQualifiedNameConverter
 import org.omg.sysml.xtext.scoping.SysMLGlobalScopeProvider
 import org.omg.sysml.xtext.serializer.SysMLCrossReferenceSerializer
 import org.omg.sysml.xtext.serializer.SysMLGrammarConstraintProvider
+import org.omg.sysml.xtext.serializer.SysMLTransientValueService
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -80,5 +82,9 @@ class SysMLRuntimeModule extends AbstractSysMLRuntimeModule {
 	
 	def Class<? extends IGrammarConstraintProvider> bindIGrammarConstraintProvider() {
 		SysMLGrammarConstraintProvider
+	}
+	
+	override Class<? extends ITransientValueService> bindITransientValueService() {
+		SysMLTransientValueService
 	}
 }
