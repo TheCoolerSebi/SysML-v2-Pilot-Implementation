@@ -3,25 +3,29 @@
  */
 package org.omg.sysml.xtext
 
-import org.eclipse.xtext.naming.IQualifiedNameConverter
-import org.eclipse.xtext.scoping.IGlobalScopeProvider
-import org.omg.sysml.xtext.library.SysMLLibraryProvider
-import org.omg.sysml.lang.sysml.util.IModelLibraryProvider
-import org.omg.sysml.xtext.scoping.SysMLGlobalScopeProvider
-import org.omg.sysml.xtext.naming.SysMLQualifiedNameConverter
 import com.google.inject.Binder
 import com.google.inject.name.Names
-import org.eclipse.xtext.validation.CompositeEValidator
+import org.eclipse.xtext.linking.ILinker
+import org.eclipse.xtext.naming.IQualifiedNameConverter
 import org.eclipse.xtext.naming.IQualifiedNameProvider
-import org.omg.kerml.xtext.naming.KerMLQualifiedNameProviderimport org.omg.kerml.xtext.scoping.KerMLLinker
-import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.resource.DerivedStateAwareResource
-import org.eclipse.xtext.resource.IDerivedStateComputer
-import org.omg.kerml.xtext.KerMLDerivedStateComputer
 import org.eclipse.xtext.resource.DerivedStateAwareResourceDescriptionManager
+import org.eclipse.xtext.resource.IDerivedStateComputer
 import org.eclipse.xtext.resource.IResourceDescription
+import org.eclipse.xtext.resource.XtextResource
+import org.eclipse.xtext.scoping.IGlobalScopeProvider
+import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer
+import org.eclipse.xtext.validation.CompositeEValidator
 import org.eclipse.xtext.validation.IResourceValidator
 import org.eclipse.xtext.xbase.annotations.validation.DerivedStateAwareResourceValidator
+import org.omg.kerml.xtext.KerMLDerivedStateComputer
+import org.omg.kerml.xtext.naming.KerMLQualifiedNameProvider
+import org.omg.kerml.xtext.scoping.KerMLLinker
+import org.omg.sysml.lang.sysml.util.IModelLibraryProvider
+import org.omg.sysml.xtext.library.SysMLLibraryProvider
+import org.omg.sysml.xtext.naming.SysMLQualifiedNameConverter
+import org.omg.sysml.xtext.scoping.SysMLGlobalScopeProvider
+import org.omg.sysml.xtext.serializer.SysMLCrossReferenceSerializer
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -44,7 +48,7 @@ class SysMLRuntimeModule extends AbstractSysMLRuntimeModule {
 		KerMLQualifiedNameProvider
 	}
 	
-	override Class<? extends org.eclipse.xtext.linking.ILinker> bindILinker() {
+	override Class<? extends ILinker> bindILinker() {
 		KerMLLinker
 	}
 
@@ -66,5 +70,9 @@ class SysMLRuntimeModule extends AbstractSysMLRuntimeModule {
 
 	def Class<? extends IDerivedStateComputer> bindIDerivedStateComputer() {
 		KerMLDerivedStateComputer
+	}
+	
+	def Class<? extends ICrossReferenceSerializer> bindICrossReferenceSerializer() {
+		SysMLCrossReferenceSerializer
 	}
 }
