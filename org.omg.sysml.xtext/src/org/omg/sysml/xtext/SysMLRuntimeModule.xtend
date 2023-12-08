@@ -14,6 +14,7 @@ import org.eclipse.xtext.resource.IDerivedStateComputer
 import org.eclipse.xtext.resource.IResourceDescription
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.scoping.IGlobalScopeProvider
+import org.eclipse.xtext.serializer.analysis.IGrammarConstraintProvider
 import org.eclipse.xtext.serializer.tokens.ICrossReferenceSerializer
 import org.eclipse.xtext.validation.CompositeEValidator
 import org.eclipse.xtext.validation.IResourceValidator
@@ -26,6 +27,7 @@ import org.omg.sysml.xtext.library.SysMLLibraryProvider
 import org.omg.sysml.xtext.naming.SysMLQualifiedNameConverter
 import org.omg.sysml.xtext.scoping.SysMLGlobalScopeProvider
 import org.omg.sysml.xtext.serializer.SysMLCrossReferenceSerializer
+import org.omg.sysml.xtext.serializer.SysMLGrammarConstraintProvider
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -74,5 +76,9 @@ class SysMLRuntimeModule extends AbstractSysMLRuntimeModule {
 	
 	def Class<? extends ICrossReferenceSerializer> bindICrossReferenceSerializer() {
 		SysMLCrossReferenceSerializer
+	}
+	
+	def Class<? extends IGrammarConstraintProvider> bindIGrammarConstraintProvider() {
+		SysMLGrammarConstraintProvider
 	}
 }
