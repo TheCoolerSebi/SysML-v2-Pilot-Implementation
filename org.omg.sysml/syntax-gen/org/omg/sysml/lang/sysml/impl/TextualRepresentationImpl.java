@@ -160,17 +160,13 @@ public class TextualRepresentationImpl extends AnnotatingElementImpl implements 
 		return body;
 	}
 	
-	@Override
-	public void setBody(String newBody) {
-		setBodyGen(ElementUtil.processCommentBody(newBody));
-	}
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setBodyGen(String newBody) {
+	@Override
+	public void setBody(String newBody) {
 		String oldBody = body;
 		body = newBody;
 		if (eNotificationRequired())

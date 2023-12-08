@@ -5,6 +5,7 @@ package org.omg.sysml.xtext
 
 import com.google.inject.Binder
 import com.google.inject.name.Names
+import org.eclipse.xtext.conversion.IValueConverterService
 import org.eclipse.xtext.linking.ILinker
 import org.eclipse.xtext.naming.IQualifiedNameConverter
 import org.eclipse.xtext.naming.IQualifiedNameProvider
@@ -24,6 +25,7 @@ import org.omg.kerml.xtext.KerMLDerivedStateComputer
 import org.omg.kerml.xtext.naming.KerMLQualifiedNameProvider
 import org.omg.kerml.xtext.scoping.KerMLLinker
 import org.omg.sysml.lang.sysml.util.IModelLibraryProvider
+import org.omg.sysml.xtext.conversion.SysMLValueConverterService
 import org.omg.sysml.xtext.library.SysMLLibraryProvider
 import org.omg.sysml.xtext.naming.SysMLQualifiedNameConverter
 import org.omg.sysml.xtext.scoping.SysMLGlobalScopeProvider
@@ -86,5 +88,9 @@ class SysMLRuntimeModule extends AbstractSysMLRuntimeModule {
 	
 	override Class<? extends ITransientValueService> bindITransientValueService() {
 		SysMLTransientValueService
+	}
+	
+	override Class<? extends IValueConverterService> bindIValueConverterService() {
+		SysMLValueConverterService
 	}
 }

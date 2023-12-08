@@ -4334,7 +4334,7 @@ public class KerMLExpressionsGrammarAccess extends AbstractElementFinder.Abstrac
 		return tSTRING_VALUE;
 	}
 	
-	//terminal REGULAR_COMMENT:
+	//terminal REGULAR_COMMENT returns Ecore::EString:
 	//    '/*' ->'*/';
 	public TerminalRule getREGULAR_COMMENTRule() {
 		return tREGULAR_COMMENT;

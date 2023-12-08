@@ -20938,7 +20938,7 @@ public class SysMLGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		return gaKerMLExpressions.getSTRING_VALUERule();
 	}
 	
-	//terminal REGULAR_COMMENT:
+	//terminal REGULAR_COMMENT returns Ecore::EString:
 	//    '/*' ->'*/';
 	public TerminalRule getREGULAR_COMMENTRule() {
 		return gaKerMLExpressions.getREGULAR_COMMENTRule();

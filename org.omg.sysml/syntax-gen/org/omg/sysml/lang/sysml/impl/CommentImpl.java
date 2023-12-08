@@ -138,18 +138,10 @@ public class CommentImpl extends AnnotatingElementImpl implements Comment {
 	 * <!-- begin-user-doc -->
 	 * Process the comment body per specification rules.
 	 * <!-- end-user-doc -->
-	 * @generated NOT 
+	 * @generated
 	 */
 	@Override
 	public void setBody(String newBody) {
-		setBodyGen(ElementUtil.processCommentBody(newBody));
-	}
-	
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setBodyGen(String newBody) {
 		String oldBody = body;
 		body = newBody;
 		if (eNotificationRequired())

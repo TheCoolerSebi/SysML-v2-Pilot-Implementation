@@ -545,7 +545,7 @@ terminal UNRESTRICTED_NAME returns Ecore::EString:
 terminal STRING_VALUE returns Ecore::EString:
 	'"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | '"' | "'" | '\\') | !('\\' | '"'))* '"';
 
-terminal REGULAR_COMMENT:
+terminal REGULAR_COMMENT returns Ecore::EString:
 	'/*' ->'*/';
 
 terminal ML_NOTE:
