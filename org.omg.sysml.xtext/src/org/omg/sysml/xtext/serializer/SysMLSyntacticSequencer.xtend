@@ -3,6 +3,31 @@
  */
 package org.omg.sysml.xtext.serializer
 
+import com.google.inject.Inject
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtext.RuleCall
+import org.omg.sysml.xtext.services.SysMLGrammarAccess
+import org.eclipse.xtext.Keyword
+import org.eclipse.xtext.nodemodel.ILeafNode
 
-class SysMLSyntacticSequencer extends AbstractSysMLSyntacticSequencer {
+class SysMLSyntacticSequencer extends TestSemanticSequencer {
+	/* @Inject
+	extension SysMLGrammarAccess
+	
+	override acceptUnassignedKeyword(Keyword keyword, String token, ILeafNode node) {
+		println("kw " + keyword)
+		if (keyword == primaryExpressionAccess.operatorAssignment_2_0_1_1) {
+			println("Assigned [")
+		}
+		super.acceptUnassignedKeyword(keyword, token, node)
+	}
+	
+	override leaveAssignedParserRuleCall(RuleCall rc, EObject semanticChild) {
+		super.leaveAssignedParserRuleCall(rc, semanticChild)
+		println(rc.rule.name + " >>> " + semanticChild)
+		if (rc == primaryExpressionAccess.operandSequenceExpressionParserRuleCall_2_0_1_2_0) {
+			acceptUnassignedKeyword(primaryExpressionAccess.rightSquareBracketKeyword_2_0_1_3, "]", null)
+		}
+	}*/
+	
 }

@@ -13,19 +13,25 @@
 
 package org.omg.sysml.xtext.serializer;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.xtext.CrossReference;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.GrammarUtil;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IScope;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.serializer.diagnostic.ISerializationDiagnostic.Acceptor;
 import org.eclipse.xtext.serializer.tokens.CrossReferenceSerializer;
 import org.eclipse.xtext.serializer.tokens.SerializerScopeProviderBinding;
+import org.omg.kerml.xtext.naming.KerMLQualifiedEffectiveNameProvider;
+import org.omg.sysml.lang.sysml.Element;
+import org.omg.sysml.lang.sysml.OwningMembership;
 
 import com.google.inject.Inject;
 
@@ -49,7 +55,7 @@ import com.google.inject.Inject;
 @SuppressWarnings("restriction")
 public class SysMLCrossReferenceSerializer extends CrossReferenceSerializer {
 	@Inject
-	private IQualifiedNameProvider qualifiedNameProvider;
+	private KerMLQualifiedEffectiveNameProvider qualifiedNameProvider;
 
 	@Inject
 	private IQualifiedNameConverter qualifiedNameConverter;
@@ -78,9 +84,30 @@ public class SysMLCrossReferenceSerializer extends CrossReferenceSerializer {
 
 		// TODO Replace once the performance of SysMLScopeProvider has been improved.
 		QualifiedName qualifiedName = qualifiedNameProvider.getFullyQualifiedName(target);
-		if (qualifiedName == null) {
-			return null;
+		if (qualifiedName == null && target instanceof OwningMembership) {
+			OwningMembership membership = (OwningMembership) target;
+			qualifiedName = qualifiedNameProvider.getFullyQualifiedName(membership.getOwnedMemberElement());
+		}
+		URI targetURI = EcoreUtil2.getPlatformResourceOrNormalizedURI(target);
+		if (qualifiedName == null || !validInScope(scope, qualifiedName, targetURI)) {
+			if (!(target instanceof Element)) {
+				throw new IllegalArgumentException("Unexpected cross reference: " + target);
+			}
+			Element element = (Element) target;
+			String effectiveName = element.effectiveName();
+			if (effectiveName == null) {
+				throw new IllegalArgumentException("Element without effective name: " + target);
+			}
+			qualifiedName = qualifiedNameConverter.toQualifiedName(effectiveName);
+			if (!validInScope(scope, qualifiedName, targetURI)) {
+				throw new IllegalArgumentException("Effective name not valid in scope: " + effectiveName);
+			}
 		}
 		return qualifiedNameConverter.toString(qualifiedName);
+	}
+	
+	private boolean validInScope(IScope scope, QualifiedName qualifiedName, URI targetURI) {
+		IEObjectDescription desc = scope.getSingleElement(qualifiedName);
+		return desc != null && desc.getEObjectURI().equals(targetURI);
 	}
 }

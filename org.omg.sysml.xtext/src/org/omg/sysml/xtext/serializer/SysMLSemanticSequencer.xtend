@@ -3,6 +3,32 @@
  */
 package org.omg.sysml.xtext.serializer
 
-
 class SysMLSemanticSequencer extends AbstractSysMLSemanticSequencer {
+/* 	@Inject
+	extension SysMLGrammarAccess grammarAccess
+	
+	override sequence(ISerializationContext context, EObject semanticObject) {
+		if (!(semanticObject instanceof OperatorExpression)) {
+			super.sequence(context, semanticObject)
+			return
+		}
+		val expression = semanticObject as OperatorExpression
+		if (expression.operator == "[") {
+			var feeder = createSequencerFeeder(context, semanticObject)
+			if (context.parserRule == targetExpressionRule) {
+				feeder.accept(targetExpressionAccess.operatorExpressionOperandAction_1_1_0_0, expression.operand.get(0), 0)
+				feeder.accept(targetExpressionAccess.operatorLeftSquareBracketKeyword_1_1_0_1_0, expression.operator)
+				feeder.accept(targetExpressionAccess.operandSequenceExpressionParserRuleCall_1_1_0_2_0, expression.operand.get(1), 1)
+				feeder.accept(targetExpressionAccess.rightSquareBracketKeyword_1_1_0_3)
+			} else {
+				// Is this always an OwnedExpression?
+				feeder.accept(primaryExpressionAccess.operatorExpressionOperandAction_2_0_1_0, expression.operand.get(0), 0)
+				feeder.accept(primaryExpressionAccess.operatorLeftSquareBracketKeyword_2_0_1_1_0, expression.operator)
+				feeder.accept(primaryExpressionAccess.operandSequenceExpressionParserRuleCall_2_0_1_2_0, expression.operand.get(1), 1)
+				feeder.accept(primaryExpressionAccess.rightSquareBracketKeyword_2_0_1_3)
+			}
+			return
+		}
+		super.sequence(context, semanticObject)
+	}*/
 }

@@ -33,11 +33,15 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.parsetree.reconstr.impl.DefaultTransientValueService;
 import org.omg.sysml.lang.sysml.Element;
 import org.omg.sysml.lang.sysml.EndFeatureMembership;
+import org.omg.sysml.lang.sysml.Expression;
 import org.omg.sysml.lang.sysml.Feature;
 import org.omg.sysml.lang.sysml.FeatureMembership;
+import org.omg.sysml.lang.sysml.FeatureReferenceExpression;
+import org.omg.sysml.lang.sysml.InvocationExpression;
 import org.omg.sysml.lang.sysml.ItemFlowEnd;
 import org.omg.sysml.lang.sysml.Multiplicity;
 import org.omg.sysml.lang.sysml.MultiplicityRange;
+import org.omg.sysml.lang.sysml.OperatorExpression;
 import org.omg.sysml.lang.sysml.OwningMembership;
 import org.omg.sysml.lang.sysml.ParameterMembership;
 import org.omg.sysml.lang.sysml.Redefinition;
@@ -45,22 +49,28 @@ import org.omg.sysml.lang.sysml.Relationship;
 import org.omg.sysml.lang.sysml.ReturnParameterMembership;
 import org.omg.sysml.lang.sysml.SysMLPackage;
 import org.omg.sysml.lang.sysml.Type;
+import org.omg.sysml.util.FeatureUtil;
 
 public class SysMLTransientValueService extends DefaultTransientValueService {
 
 	private static final Set<EStructuralFeature> TRANSIENT_FEATURES;
+	private static final Set<EStructuralFeature> OWNING_RELATIONSHIP_TARGETS;
 	private static final Set<EStructuralFeature> CHECK_ELEMENTS_INDIVIDUALLY;
 
 	static {
 		TRANSIENT_FEATURES = new HashSet<>();
 		// Features initialized implicitly by setting delegates or FeatureUtil.
-		TRANSIENT_FEATURES.add(SysMLPackage.Literals.CONJUGATION__CONJUGATED_TYPE);
+		TRANSIENT_FEATURES.add(SysMLPackage.Literals.ELEMENT__ELEMENT_ID);
 		TRANSIENT_FEATURES.add(SysMLPackage.Literals.FEATURE__IS_COMPOSITE);
 		TRANSIENT_FEATURES.add(SysMLPackage.Literals.FEATURE_TYPING__TYPED_FEATURE);
-		TRANSIENT_FEATURES.add(SysMLPackage.Literals.PORT_CONJUGATION__ORIGINAL_PORT_DEFINITION);
-		TRANSIENT_FEATURES.add(SysMLPackage.Literals.REDEFINITION__REDEFINING_FEATURE);
 		TRANSIENT_FEATURES.add(SysMLPackage.Literals.SUBSETTING__SUBSETTING_FEATURE);
+		TRANSIENT_FEATURES.add(SysMLPackage.Literals.REDEFINITION__REDEFINING_FEATURE);
 
+		OWNING_RELATIONSHIP_TARGETS = new HashSet<>();
+		OWNING_RELATIONSHIP_TARGETS.add(SysMLPackage.Literals.CONJUGATION__CONJUGATED_TYPE);
+		OWNING_RELATIONSHIP_TARGETS.add(SysMLPackage.Literals.PORT_CONJUGATION__ORIGINAL_PORT_DEFINITION);
+		OWNING_RELATIONSHIP_TARGETS.add(SysMLPackage.Literals.REFERENCE_SUBSETTING__REFERENCED_FEATURE);
+		
 		CHECK_ELEMENTS_INDIVIDUALLY = new HashSet<>();
 		CHECK_ELEMENTS_INDIVIDUALLY.add(SysMLPackage.Literals.ELEMENT__OWNED_RELATIONSHIP);
 		CHECK_ELEMENTS_INDIVIDUALLY.add(SysMLPackage.Literals.RELATIONSHIP__OWNED_RELATED_ELEMENT);
@@ -104,6 +114,24 @@ public class SysMLTransientValueService extends DefaultTransientValueService {
 			return ((Feature) owner).getOwningMembership() instanceof EndFeatureMembership;
 		} else if (SysMLPackage.Literals.ELEMENT__OWNED_RELATIONSHIP.equals(feature)) {
 			Relationship relationship = ((Element) owner).getOwnedRelationship().get(index);
+			if (owner instanceof Expression && relationship instanceof ReturnParameterMembership) {
+				if (owner instanceof OperatorExpression) {
+					OperatorExpression operatorExpression = (OperatorExpression) owner;
+					String operator = operatorExpression.getOperator();
+					return !"all".equals(operator) && !"as".equals(operator) && !"meta".equals(operator);
+				}
+				if (owner instanceof FeatureReferenceExpression) {
+					// TODO Is this SelfReferenceExpression?
+					return ((FeatureReferenceExpression) owner).getOwnedMembership().size() != 1;
+				}
+				return true;
+			}
+			if (owner instanceof InvocationExpression && relationship instanceof ParameterMembership) {
+				ParameterMembership parameterMembership = (ParameterMembership) relationship;
+				if (FeatureUtil.isInputParameter(parameterMembership.getOwnedMemberFeature())) {
+					return true;
+				}
+			}
 			if (relationship instanceof OwningMembership) {
 				// Multiplicity inserted by FeatureUtil.
 				return isAllTransient(relationship, SysMLPackage.Literals.RELATIONSHIP__OWNED_RELATED_ELEMENT);
@@ -117,7 +145,12 @@ public class SysMLTransientValueService extends DefaultTransientValueService {
 				// a MultiplicityRange is missing.
 				return true;
 			}
-
+		} else if (SysMLPackage.Literals.INVOCATION_EXPRESSION__OPERAND.equals(feature)) {
+			return false;
+		} else if (OWNING_RELATIONSHIP_TARGETS.contains(feature)) {
+			Relationship subsetting = (Relationship) owner;
+			// TODO Check whether the target is the first owned related element?
+			return !subsetting.getOwnedRelatedElement().isEmpty();
 		}
 		return super.isTransient(owner, feature, index);
 	}

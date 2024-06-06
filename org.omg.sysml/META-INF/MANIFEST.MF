@@ -42,7 +42,7 @@ Export-Package: org.omg.sysml,
  org.omg.sysml.util.traversal,
  org.omg.sysml.util.traversal.facade,
  org.omg.sysml.util.traversal.facade.impl
-Import-Package: com.ibm.icu.impl.text;version="58.2.0",
+Import-Package: 
  org.apache.commons.logging,
  org.apache.log4j
 Automatic-Module-Name: org.omg.sysml
